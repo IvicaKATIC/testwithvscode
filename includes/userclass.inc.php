@@ -39,6 +39,7 @@ class User extends Connection
 
         if ($stmt->rowCount() == 1) {
             session_start();
+            $_SESSION['uid'] = $userdefiniton['user_id'];
             $_SESSION['uname'] = $uname;
             $_SESSION['loggedin'] = true;
             $_SESSION['userrole'] = $userdefiniton['userrole'];

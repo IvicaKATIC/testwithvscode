@@ -13,7 +13,9 @@ echo '<nav class="navbar navbar-light bg-light">
 <div id="container">
     <h2>Warenkorb:</h2>
     <?php
-    include 'includes/productclass.inc.php';
+    include 'includes/cartclass.inc.php';
+    $cart = new Cart();
+    $cart->loadCart();
     ?>
 </div>
 

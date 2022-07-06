@@ -22,7 +22,7 @@ class Product extends Connection
 
     public function loadAllProducts()
     {
-        $sql = "SELECT * FROM product";
+        $sql = "SELECT * FROM product ORDER BY price ASC";
         $stmt = $this->connect()->prepare($sql);
         $stmt->execute();
         echo "<h4><table><tr><th>Name</th><th>Beschreibung</th><th>Preis</th><th>Zum Warenkorb hinzufügen</th></tr>";
@@ -32,23 +32,34 @@ class Product extends Connection
                   <td>" . $produktdata['description'] . "</td>
                   <td>€ " . $produktdata['price'] . "</td>
                   <td><form action='' method='POST'><button type='submit' name='cartbtn' value='" . $produktdata['id'] . "'>Hinzufügen</button></form></td>
-                  </tr>";         
+                  </tr>";
         }
         echo "</table></h4>";
     }
 
     public function addToCart($product_id)
     {
-        $sql = "SELECT * FROM product WHERE id = $product_id";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->execute([$product_id]);
-
-        $name = $product_id['name'];
-        $price = $product_id['price'];
-
-        $sql = "INSERT INTO cart (name,price) VALUES (?,?)";
-        $stmt = $this->connect()->query($sql);
-        $stmt->execute([$name, $price]);
-        echo '<h4>Das Produkt wurde erfolgreich hinzugefügt!</h4>';
+        try {
+            $sql = "SELECT * FROM product WHERE id = ? ";
+            $stmt = $this->connect()->prepare($sql);
+            $stmt->execute([$product_id]);
+            $res = $stmt->fetch();
+            
+            
+            $pid = $res['id'];
+            $name = $res['name'];
+            $price = $res['price'];
+            $userid = $_SESSION['uid'];
+            
+            $sqli = "INSERT INTO cart (product_id, product_name, product_price, user_id) VALUES (?,?,?,?)";
+            $stmt = $this->connect()->prepare($sqli);
+            $stmt->execute([$pid, $name, $price, $userid]);
+            $res1 = $stmt->fetch();
+            print_r($res1);
+            echo '<h4>Das Produkt wurde erfolgreich hinzugefügt!</h4>';
+            header("Refresh:1; url=productlist.php");
+        } catch (PDOException $e) {
+            echo "Fehler beim hinzufügen des Produktes:  " . $e->getMessage();
+        }
     }
 }

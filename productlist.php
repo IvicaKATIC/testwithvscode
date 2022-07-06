@@ -13,7 +13,7 @@ echo '<nav class="navbar navbar-light bg-light">
     $product->loadAllProducts();
     echo '<h4>Hier geht es zum <a href="cart.php">Warenkorb</a></h4>';
     if (isset($_POST['cartbtn'])) {
-        $product_id = $_POST['cartbtn'];
+        $product_id = intval($_POST['cartbtn']);
         try {
             $product->addToCart($product_id);
         } catch (Exception $ex) {
